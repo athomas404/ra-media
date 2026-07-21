@@ -111,6 +111,25 @@ The `docs/` folder is the long-term memory of the project. If you want to contri
 * `docs/testing/END_TO_END_RA_01_MODTEST.md` through `END_TO_END_RA_04...` - step-by-step end-to-end test manuals: Madness Consecration, the totem arc, the astral systems, and ships-with-oars.
 * `docs/madness_consecration/` - per-stage ritual specs (clue arc, Stage 1 consecration, Stage 2 formation).
 
+## The Battle Totem system in detail
+
+* **Five totem spirits**, each with its own aura effect and identity: Ironfang (melee), Fletchwind (the bow), Stoneshear (stone), Timbersaw (timber), and Barkskin (endurance). Auras help anyone standing inside them - your crew included - and overlapping auras stack.
+* **Spirit Journeys** are five-stage solo discovery arcs, one per spirit. Each begins from a chance encounter (specific actions, materials, or biomes can call the first whisper) and advances through staged trials tracked in your Grimoire's Journeys tab, ending in an activation secret unique to your world.
+* **The totem altar is built, not found.** Constructing it is itself a multi-stage act: a hand-laid floor, a seed-deterministic pentagram whose geometry is unique to your world, gem-crowned vertex diases, and reagents deposited in a strict interleaved cadence during the rite. The consecration walks you vertex to vertex on a timer, locks the site behind a barrier while you work, and punishes sloppiness.
+* **Tiered consecrations** (Novice through Master) escalate sharply - later tiers add tighter rhythm windows, seed-fixed timing, storm gates, vigils, and real material stakes. The Master rite ends in an outright spectacle involving the weather. I'll say no more.
+* **Charge and renewal.** Totems drain as they serve and must be recharged at the altar through a shorter renewal rite. Mastery with each spirit is earned by fighting alongside it, and deep mastery changes the economics of keeping it fed - the Master capstone is worth the climb.
+* **The soft cap.** Deploying many totems at once builds *resonance* - diminishing returns and mounting side effects that discourage totem farms without any hard limit. The deeper your mastery, the more the Grimoire will tell you about what the spirits are feeling.
+* **Soulbound.** A placed totem belongs to its owner until they return for it. Death does not orphan it, and other players cannot walk off with it.
+
+## How Astral Communion works
+
+* **19 constellations** currently hide in the night sky, organized into six thematic pools (temporal, wayfinding, omen, wild, hearth, threshold). Each was mined from the game's real 8,170-star catalog by offline tooling, so every shape is made of genuine stars and moves with the genuine sky, including a connect-the-stars trace animation on first reveal.
+* **Answers.** Certain gameplay acts - picking the right thing up at the right moment, surviving what should have killed you, stepping through the wrong door, and more - quietly *bank a promise*. The sky stirs; at dusk, if the constellation in question can actually stand in your sky, the answer is delivered. Reveals expire at dawn.
+* **The picker is honest.** Visibility is computed per-latitude and per-season in closed form, and a promised answer is drawn from a preference-ordered pool - so a reveal is never silently eaten because you live too far north or the season is wrong.
+* **Sky gifts.** Roughly one night in seven, a constellation simply appears, uncaused - the system's invitation to players who never trip a trigger.
+* **Witnessing.** Watching a revealed constellation - really watching it, at night, over multiple nights - advances a per-shape ladder (Glimpsed, Marked, Studied, Attuned) tracked in a new Grimoire Constellations tab, with lore that sharpens as your familiarity deepens. Attunement carries privileges; combinations of attuned shapes are already whispering about recipes.
+* **Ritual linkage** (which rituals reveal which constellations, and what each shape is *for*) is the next act of this system and intentionally not yet live.
+
 ## Future Plans
 
 1. More rituals for various things! Each ritual is its own multi-stage side-quest, and as VS continues to evolve (especially on the quest side of things), I'll be creating rituals that echo that story.
