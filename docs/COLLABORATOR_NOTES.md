@@ -1,9 +1,9 @@
 # Ritual Apotheosis — Design Philosophy, Architecture & Collaborator Notes
 
-> **SPOILER WARNING.** This document discloses design reasoning and the layout
-> of the codebase. It deliberately does *not* repeat the worked-example ritual
-> spoilers (those stay on the mod page, behind its spoiler dropdown), but if
-> you want to experience the mod completely fresh, close this tab.
+> **SPOILER WARNING.** This document discloses design reasoning, the layout
+> of the codebase, AND the complete worked example of the first ritual -
+> full gameplay spoilers included. If you want to experience the mod
+> completely fresh, close this tab.
 >
 > This page exists because the ModDB description has a size limit and this
 > section outgrew it. File paths below refer to the main development repo,
@@ -20,6 +20,24 @@ Five principles shape every design decision in the mod:
 3. **Collaboration must never be foreclosed.** Two players with different fragments of the same rite should be able to perform it together. Clues are not account-bound knowledge; they are intentionally cryptic texts that multiple players are free to interpret and discuss among themselves - and on larger servers, perhaps that knowledge could be bartered!
 4. **Server-authoritative everything.** If a rite affects the world, the server decides. Client code renders and predicts, nothing more.
 5. **Behaviors over subclassing.** The mod composes `CollectibleBehavior` / `BlockEntityBehavior` / `EntityBehavior` rather than building deep inheritance trees. This matches how Vintage Story's survival mod is built and plays well with other mods.
+
+## The worked example: Madness Consecration
+
+The first implemented ritual. It was (and will be) the reference shape against which the engine was/is sanity-checked. The full per-stage specifications live in `docs/madness_consecration/` -- `CLUES.md` covers the seven-clue discovery arc and its probe system, `STAGE1_RITUAL.md` covers the consecration rite itself, and `STAGE2_FORMATION.md` covers the ward-formation placement lifecycle.
+
+**Purpose.** Completing the ritual teaches users how to create a persistent object that, when combined with like-objects in formation, can nullify temporal stability loss in a 3D region. Useful in deeply unstable terrain and extreme depths where vanilla play is otherwise hostile.
+
+**Discovery Arc.** Killing certain enemies or mining deep underground may drop a scroll; right-clicking grants a tome entry in a Grimoire (accessible with the hotkey 'G') that allows you to review collected clues, and track how they evolve. Each clue reveals more and more of its own detail as the player accumulates specific kinds of experience - time spent near temporal rifts at rock-bottom stability, hours spent mining below a Y threshold, reading the right scroll while on the brink of insanity deep underground, and so on. A seventh clue is knowledge-gated: it requires the previous six to be fully decoded first, and for the ritual to be completed. Weather events will help to show you where the rite must be performed.
+
+**Performance Arc (Stage 1 - Consecration).** Players bring two (Large) copper lanterns and a third (Large) non-copper lantern into a small, deep, enclosed chamber located over a ley-line during the evening. They place the lanterns in a line with the odd one in the middle, light all three, then build and light at least one campfire nearby. A progress bar begins. While the bar climbs, the participants must stand in a lit campfire. When conditions hold simultaneously, the bar snaps to full and the rite fires: all lights go out, interaction with light sources in the chamber is locked for 35 seconds, rising whispers sound, participants suffer stability loss - and at the 20-second mark, lights flicker back on, the sacrificial lanterns have been consumed, and the central lantern has been replaced with a Novice Madness Ward Idol. Every participant gains the corresponding grimoire pattern.
+
+**Performance Arc (Stage 2 - Formation).** The Novice idol is the starting point of a sculpting journey. Back at home, participants chisel further copies at higher tiers (Practiced, Skilled, Master) using their learned grimoire pattern as a voxel wireframe overlay. To project protection at a location, four idols of matching tier are placed at the corners of a square. The edge length scales with tier (Novice 5 blocks, Master 20). Placement itself is the ritual - the moment the fourth corner lands, the formation detects its own completion and registers a persistent ward zone that projects outward from the inner box by a tier-scaled radius. Breaking any corner idol causes the zone to falter and eventually fail.
+
+**What this one rite forced the engine to support.** Location predicates (ley-line proximity), time-of-day gates (evening), chamber-shape predicates (enclosed, depth-gated, size-bounded), specific world blocks in specific relative positions, light-state predicates (lit/unlit), ordered action sequences within a charging window, multi-player participation, delayed outcomes over a multi-second window, item consumption plus block replacement plus pattern-knowledge grants at the moment of firing, placement-triggered formation detection on configurable shapes, per-tier effect parameters, persistent save-safe area effects, and tear-down-on-corner-break lifecycle. This is where the worst bugs I wasn't able to find might live.
+
+Every future ritual will be built on the same engine, varying and iterating the surfaces this engine invokes. The engine itself -- the shared validator, state machine, definition schema, outcome dispatcher, and failure cooldown -- is documented in `docs/design/RITUAL_STATE_MACHINE.md`. The active clue-advancement probe framework (how clues detect player experience and advance decode stages) is documented in `docs/design/CLUE_PROBE_SYSTEM.md`.
+
+The Shipwright's Sanctification and the Battle Totem consecrations have since become the second and third proofs of that engine - the Shipwright stretching it across an entire subsystem boundary (the ritual fires a ship-engine launch), and the totem altar stretching it into multi-phase, timed, geometry-validated performance. The design locks for both live in `docs/design/` (`RITUAL_SHIPWRIGHT.md`, `SHIPWRIGHT_SANCTIFICATION_DESIGN_LOCK.md`, `BATTLE_TOTEM_DESIGN.md`, `docs/totem_consecration/`).
 
 ## The idol system
 
@@ -92,6 +110,26 @@ The `docs/` folder is the long-term memory of the project. If you want to contri
 * `docs/testing/COMPLEXITY_REPORT.md` - Big-O analysis of every system, grouped by performance impact.
 * `docs/testing/END_TO_END_RA_01_MODTEST.md` through `END_TO_END_RA_04...` - step-by-step end-to-end test manuals: Madness Consecration, the totem arc, the astral systems, and ships-with-oars.
 * `docs/madness_consecration/` - per-stage ritual specs (clue arc, Stage 1 consecration, Stage 2 formation).
+
+## Future Plans
+
+1. More rituals for various things! Each ritual is its own multi-stage side-quest, and as VS continues to evolve (especially on the quest side of things), I'll be creating rituals that echo that story.
+   * Rituals to call for weather or alter soil compositions passively. It might be nice to have a constant amount of wind in a certain place ...
+   * Rituals to attract and aid in taming animals - not necessarily for domestication, but as traveling companions.
+   * An additional series of "ward-type" ritual idols that require a set formation and placement, like Madness-Consecration's "stability-lock" idol. Maybe one to suppress rifts from spawning, for instance.
+
+2. Battle totems! ~~I have lots of ideas for idols that function almost like Shaman totems from World of Warcraft. These would be used primarily for combat, and add a whole new way to experience it.~~ **This one is no longer a plan - it's built, and in playtesting now.** The original vision held up: battle totem rituals are completed solo, and the unlocking rituals took exactly the "Spirit Journey" shape described here from the start - traversing distances and doing certain things at certain places, as a deliberate departure from the baseline "organic clue" format. See **Battle Totems: the Spirit Journeys** above.
+
+3. A farming and fishing wave: a farming-focused ward idol family to shelter and enrich your fields, and a fishing-focused battle totem for those who'd rather work the water. Both are designed against vanilla's actual soil-nutrient, crop-temperature, and fishing systems rather than bolting on parallel mechanics.
+
+4. The sky, taken seriously: tying Astral Communion into the ritual arcs proper (which rites reveal which constellations, and what the shapes are *for*), and a new family of astral works beyond it. The first - a way for the truly devoted to fold distance itself, at a price that is paid in more than materials - is deep in design now. That is all I will say.
+
+5. As more rituals come into play, players may find that they can automate or speed things up a bunch - that is nice in some cases, but in the spirit of Vintage Story, I believe it's important that Ritual Apotheosis doesn't overwhelm the game's intentions. As such, eventually I plan to have certain persistent rituals come with their own persistent costs.
+   * Reducing maximum stability, health, or satiety.
+   * Unique debuffs for maintaining too many rituals at once.
+   * The battle totems' resonance soft-cap is the first shipped example of this philosophy - and the upcoming astral works will lean into it much harder.
+
+6. And much more! Speaking of which, if you have ideas of your own ...
 
 ## Contributing
 
